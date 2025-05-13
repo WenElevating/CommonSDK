@@ -50,4 +50,4 @@
     }
 ```
 ##### Provide a running screenshot:
-![Run Sample](.\sample.png)  
+<img width="591" alt="Run Sample" src="https://github.com/user-attachments/assets/eb099a24-e941-40e8-8512-1eaac24fdd81" />
