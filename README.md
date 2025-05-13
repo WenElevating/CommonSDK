@@ -2,9 +2,14 @@
 #### Includes the following directory:
 - CommonSDK
   - AI
+    - Enum
+        - AIPlatform
+    - Interface
+        - IChatService<T>
+        - ICommandService
 	- Ollama
-		- IChatService<T>
 		- OllamaService
+        - OllamaCommandService
   - EventBus
 	- Interface
 	- Model

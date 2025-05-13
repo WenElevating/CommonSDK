@@ -1,4 +1,4 @@
-﻿namespace CommonSDK.AI.Ollama;
+﻿namespace CommonSDK.AI.Interface;
 
 public interface IChatService<T> : IAsyncDisposable
 {
