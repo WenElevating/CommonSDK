@@ -2,5 +2,9 @@
 
 public class TestController
 {
-    
+    [Get("/data")]
+    public string GetData()
+    {
+        return "Test";
+    }
 }

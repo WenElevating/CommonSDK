@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
-using CommonSDK.Interface;
-using CommonSDK.Model;
+using CommonSDK.EventBus.Interface;
+using CommonSDK.EventBus.Model;
 
 namespace TestSDK;
 

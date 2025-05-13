@@ -1,6 +1,6 @@
 ﻿namespace CommonSDK.HttpServer;
 
-public class Bean
+public class Bean : Attribute
 {
     
 }

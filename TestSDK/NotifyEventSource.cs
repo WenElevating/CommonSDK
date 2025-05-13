@@ -1,4 +1,4 @@
-﻿using CommonSDK.Model;
+﻿using CommonSDK.EventBus.Model;
 
 namespace TestSDK;
 

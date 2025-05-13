@@ -1,4 +1,4 @@
-﻿namespace CommonSDK.Interface;
+﻿namespace CommonSDK.EventBus.Interface;
 
 public abstract class BaseEventType
 {

@@ -1,4 +1,4 @@
-﻿using CommonSDK.Interface;
+﻿using CommonSDK.EventBus.Interface;
 
 namespace TestSDK;
 

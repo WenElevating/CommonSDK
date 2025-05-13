@@ -1,6 +1,6 @@
-﻿using CommonSDK.Model;
+﻿using CommonSDK.EventBus.Model;
 
-namespace CommonSDK.Interface;
+namespace CommonSDK.EventBus.Interface;
 
 /// <summary>
 /// 事件总线基础接口

@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
-using CommonSDK.Interface;
-using CommonSDK.Service;
+using CommonSDK.EventBus.Service;
 
 namespace TestSDK.Test;
 
@@ -47,6 +46,16 @@ public class EventBusStressTester
         EventBus<string>.Instance.Unsubscribe<NotifyMessageEvent>(customNotifyEventHandler);
         
         Console.WriteLine("最终订阅结果：" + EventBus<string>.Instance.GetSubscriberCount<NotifyMessageEvent>());
+    }
+
+    public void UnsubscribeNull()
+    {
+        var handler = new NotifyMessageEventHandler();
+        var customNotifyEventHandler = new CustomNotifyEventHandler();
+
+        var res1 = EventBus<string>.Instance.Unsubscribe<NotifyMessageEvent>(handler);
+        var res2 = EventBus<string>.Instance.Unsubscribe<NotifyMessageEvent>(customNotifyEventHandler);
+        Console.WriteLine($"取消注册结果1：{res1}，结果2：{res2}");
     }
 
     public void Run()

@@ -11,4 +11,9 @@
       <ProjectReference Include="..\CommonSDK\CommonSDK.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Extensions.AI" Version="9.4.4-preview.1.25259.16" />
+      <PackageReference Include="Microsoft.Extensions.AI.Ollama" Version="9.4.4-preview.1.25259.16" />
+    </ItemGroup>
+
 </Project>

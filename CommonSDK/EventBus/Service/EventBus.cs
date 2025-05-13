@@ -1,9 +1,9 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics;
-using CommonSDK.Interface;
-using CommonSDK.Model;
+using CommonSDK.EventBus.Interface;
+using CommonSDK.EventBus.Model;
 
-namespace CommonSDK.Service;
+namespace CommonSDK.EventBus.Service;
 
 public class EventBus<T> : IEventBus<T>
 {

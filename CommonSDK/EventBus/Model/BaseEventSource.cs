@@ -1,4 +1,4 @@
-﻿namespace CommonSDK.Model;
+﻿namespace CommonSDK.EventBus.Model;
 
 public abstract class BaseEventSource<T>
 {

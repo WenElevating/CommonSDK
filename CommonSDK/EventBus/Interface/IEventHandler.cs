@@ -1,6 +1,6 @@
-﻿using CommonSDK.Model;
+﻿using CommonSDK.EventBus.Model;
 
-namespace CommonSDK.Interface;
+namespace CommonSDK.EventBus.Interface;
 
 public interface IEventHandler<T> : IEquatable<IEventHandler<T>>
 {
