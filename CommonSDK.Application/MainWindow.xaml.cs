@@ -17,7 +17,7 @@ namespace CommonSDK.Application
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly OllamaService service = new("http://localhost:8000", "llama3.2");
+        private readonly OllamaService service = new("D:\\RiderProject\\CommonSDK\\CommonSDK.Application\\OllamaConfiguration.json");
 
         public MainWindow()
         {
@@ -32,11 +32,15 @@ namespace CommonSDK.Application
             {
                 await service.RunAsync();
 
-                await service.ChatStreamAsync("Recommend a few must-read books for programmers.", (text) =>
-                {
-                    ChatTextBlock.Text += text;
-                });
+                //await service.ChatStreamAsync("Recommend a few must-read books for programmers.", (text) =>
+                //{
+                //    ChatTextBlock.Text += text;
+                //});
+
+                AI.ChatClient.ChatResponse response = await service.ChatAsync("Recommend a few must-read books for programmers.");
+                ChatTextBlock.Text += response.Data.Message.Content;
             });
+            
         }
 
         private async void MainWindow_Closed(object? sender, EventArgs e)

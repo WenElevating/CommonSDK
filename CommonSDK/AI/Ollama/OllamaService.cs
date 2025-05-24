@@ -1,23 +1,26 @@
-﻿using CommonSDK.AI.Enum;
+﻿using CommonSDK.AI.ChatClient;
+using CommonSDK.AI.Configuration;
+using CommonSDK.AI.Enum;
 using CommonSDK.AI.Factory;
 using CommonSDK.AI.Interface;
 using CommonSDK.Service;
 using CommonSDK.Util;
-using Microsoft.Extensions.AI;
 
 namespace CommonSDK.AI.Ollama;
 
 public class OllamaService : IChatService<ChatResponse>
 {
-    private readonly string endpoint = "http://localhost:11434";
+    private readonly string _endpoint = "http://localhost:11434";
 
-    private readonly string modelId = "llama3.2";
+    private readonly string _modelId = "llama3.2";
 
-    private readonly string ollamaName = "ollama";
+    private readonly string _ollamaName = "ollama";
 
     private readonly string ollamaExectueFileName = "ollama.exe";
 
     private readonly string executeablePath = "";
+
+    private readonly OllamaConfigurationManager configurationManager;
 
     private readonly IChatClient client;
 
@@ -25,14 +28,15 @@ public class OllamaService : IChatService<ChatResponse>
 
     private readonly ICommandService commandService;
 
-    public OllamaService(string endpoint, string modelId)
+    public OllamaService(string path)
     {
-        this.endpoint = endpoint;
-        this.modelId = modelId;
+        configurationManager = new OllamaConfigurationManager(path);
+        _endpoint = configurationManager.Configuration.Endpoint;
+        _modelId = configurationManager.Configuration.ModelId;
         terminalService = TerminalServiceFactory.Create();
         commandService = CommandServiceFactory.Create(AIPlatform.Ollama);
-        executeablePath = SystemUtil.GetFileIfExist(SystemUtil.GetApplicationInfo(ollamaName).InstallLocation, ollamaExectueFileName);
-        client = new OllamaChatClient(endpoint, modelId: modelId);
+        executeablePath = SystemUtil.GetFileIfExist(SystemUtil.GetApplicationInfo(_ollamaName).InstallLocation, ollamaExectueFileName);
+        client = new OllamaChatClient(_endpoint, _modelId);
     }
 
     /// <summary>
@@ -41,7 +45,7 @@ public class OllamaService : IChatService<ChatResponse>
     /// <returns></returns>
     public async Task<bool> RunAsync()
     {   
-        string command = commandService.GetRunModelCommand(executeablePath, modelId);
+        string command = commandService.GetRunModelCommand(executeablePath, _modelId);
 
         return await terminalService.ExecuteCommandAsync(command);
     }
@@ -52,7 +56,7 @@ public class OllamaService : IChatService<ChatResponse>
     /// <returns></returns>
     public async Task<bool> StopAsync()
     {
-        string command = commandService.GetStopModelCommand(executeablePath, modelId);
+        string command = commandService.GetStopModelCommand(executeablePath, _modelId);
 
         return await terminalService.ExecuteCommandAsync(command);
     }
@@ -67,7 +71,7 @@ public class OllamaService : IChatService<ChatResponse>
         ArgumentNullException.ThrowIfNullOrEmpty(message);
         ArgumentNullException.ThrowIfNullOrWhiteSpace(message);
 
-        return await client.GetResponseAsync(message);
+        return await client.ChatAsync(message);
     }
 
     public async Task ChatStreamAsync(string message, Action<string> streamCallback)
@@ -75,12 +79,12 @@ public class OllamaService : IChatService<ChatResponse>
         ArgumentNullException.ThrowIfNullOrEmpty(message);
         ArgumentNullException.ThrowIfNullOrWhiteSpace(message);
 
-        await foreach (var update in client.GetStreamingResponseAsync(message))
-        {
-            streamCallback?.Invoke(update.Text);
-            Console.Write(update);
-        }
-        Console.WriteLine();
+        //await foreach (var update in client.GetStreamingResponseAsync(message))
+        //{
+        //    streamCallback?.Invoke(update.Text);
+        //    Console.Write(update);
+        //}
+        //Console.WriteLine();
     }
 
     public async ValueTask DisposeAsync()

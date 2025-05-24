@@ -1,9 +1,11 @@
-﻿using System.Net;
+﻿using System.Diagnostics;
+using System.Net;
 using System.Net.Http.Json;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using CommonSDK.AI.ChatClient;
 using CommonSDK.AI.Ollama;
-using CommonSDK.HttpServer;
 using CommonSDK.Util;
 using Microsoft.Extensions.AI;
 using Microsoft.Win32;
@@ -98,23 +100,54 @@ class Program
         //    }
         //}
 
-        Task.Run(async () =>
-        {
-            var endpoint = "http://localhost:8000/";
-            var modelId = "llama3.2";
+        // Task.Run(async () =>
+        // {
+        //     var endpoint = "http://localhost:8000/";
+        //     var modelId = "llama3.2";
+        //
+        //     IChatClient client = new OllamaChatClient(endpoint, modelId: modelId);
+        //
+        //     List<ChatMessage> conversation =
+        //     [
+        //         new(ChatRole.System, "You are a helpful AI assistant"),
+        //         new(ChatRole.User, "What is AI?"),
+        //         new(ChatRole.Assistant, "AI, or Artificial Intelligence, refers to the simulation of human intelligence in machines that are programmed to think like humans and mimic their actions. The term may also be applied to any machine that exhibits traits associated with a human mind such as learning and problem-solving.\r\n\r\nThere are several types of AI, including:\r\n\r\n1. **Narrow or Weak AI**: This type of AI is designed to perform specifically defined tasks, such as facial recognition or language translation, at a level that surpasses human capabilities.\r\n2. **General or Strong AI**: This type of AI would possess the ability to understand, learn, and apply its intelligence broadly across many tasks, much like human beings.\r\n3. **Superintelligence**: A hypothetical AI system significantly more intelligent than the best human minds, potentially capable of solving complex problems that are unsolvable by humans.\r\n\r\nAI can be categorized into two broad types:\r\n\r\n1. **Machine Learning (ML)**: This approach involves training algorithms to learn from data, allowing them to make predictions or decisions without being explicitly programmed.\r\n2. **Deep Learning (DL)**: A subset of machine learning, deep learning uses neural networks with multiple layers to analyze and interpret data.\r\n\r\nAI has numerous applications in areas such as:\r\n\r\n1. **Virtual Assistants**: Siri, Alexa, Google Assistant\r\n2. **Image and Speech Recognition**\r\n3. **Autonomous Vehicles**\r\n4. **Healthcare**: Predictive analytics, disease diagnosis\r\n5. **Cybersecurity**: Threat detection, incident response\r\n\r\nHowever, AI also raises several concerns and challenges, such as:\r\n\r\n1. **Bias and Fairness**: AI systems can perpetuate existing biases if trained on biased data.\r\n2. **Job Displacement**: Automation could lead to job losses in sectors where tasks are repetitive or easily automated.\r\n3. **Data Privacy**: The increasing reliance on data-driven decision-making raises concerns about data protection.\r\n\r\nOverall, AI is a rapidly evolving field with the potential to transform numerous aspects of our lives and society as a whole."),
+        //         new(ChatRole.User, "Will AI affect the living space of humans?")
+        //     ];
+        //
+        //     Console.WriteLine(await client.GetResponseAsync(conversation));
+        // });
 
-            IChatClient client = new OllamaChatClient(endpoint, modelId: modelId);
+        //var task = Task.Run(async () =>
+        //{
+        //    Console.WriteLine("do some work!");
+        //    await Task.Delay(3000);
+        //});
 
-            List<ChatMessage> conversation =
-            [
-                new(ChatRole.System, "You are a helpful AI assistant"),
-                new(ChatRole.User, "What is AI?"),
-                new(ChatRole.Assistant, "AI, or Artificial Intelligence, refers to the simulation of human intelligence in machines that are programmed to think like humans and mimic their actions. The term may also be applied to any machine that exhibits traits associated with a human mind such as learning and problem-solving.\r\n\r\nThere are several types of AI, including:\r\n\r\n1. **Narrow or Weak AI**: This type of AI is designed to perform specifically defined tasks, such as facial recognition or language translation, at a level that surpasses human capabilities.\r\n2. **General or Strong AI**: This type of AI would possess the ability to understand, learn, and apply its intelligence broadly across many tasks, much like human beings.\r\n3. **Superintelligence**: A hypothetical AI system significantly more intelligent than the best human minds, potentially capable of solving complex problems that are unsolvable by humans.\r\n\r\nAI can be categorized into two broad types:\r\n\r\n1. **Machine Learning (ML)**: This approach involves training algorithms to learn from data, allowing them to make predictions or decisions without being explicitly programmed.\r\n2. **Deep Learning (DL)**: A subset of machine learning, deep learning uses neural networks with multiple layers to analyze and interpret data.\r\n\r\nAI has numerous applications in areas such as:\r\n\r\n1. **Virtual Assistants**: Siri, Alexa, Google Assistant\r\n2. **Image and Speech Recognition**\r\n3. **Autonomous Vehicles**\r\n4. **Healthcare**: Predictive analytics, disease diagnosis\r\n5. **Cybersecurity**: Threat detection, incident response\r\n\r\nHowever, AI also raises several concerns and challenges, such as:\r\n\r\n1. **Bias and Fairness**: AI systems can perpetuate existing biases if trained on biased data.\r\n2. **Job Displacement**: Automation could lead to job losses in sectors where tasks are repetitive or easily automated.\r\n3. **Data Privacy**: The increasing reliance on data-driven decision-making raises concerns about data protection.\r\n\r\nOverall, AI is a rapidly evolving field with the potential to transform numerous aspects of our lives and society as a whole."),
-                new(ChatRole.User, "Will AI affect the living space of humans?")
-            ];
+        //var taskAwaiter = task.GetAwaiter();
+        //taskAwaiter.OnCompleted(() =>
+        //{
+        //    Console.WriteLine("after do some work!");
+        //});
 
-            Console.WriteLine(await client.GetResponseAsync(conversation));
-        });
+        //taskAwaiter.GetResult();
+
+
+        //using HttpClient client = new();
+        //using HttpRequestMessage requestMessage = new();
+        //requestMessage.Method = HttpMethod.Post;
+        //requestMessage.RequestUri = new("http://192.168.4.94:8000/api/chat");
+        //requestMessage.Content = new StringContent("{\r\n  \"model\": \"llama3.2\",\r\n  \"messages\": [\r\n    {\r\n      \"role\": \"user\",\r\n      \"content\": \"why is the sky blue?\"\r\n    }\r\n  ]\r\n}", Encoding.UTF8, "application/json");
+
+        //HttpResponseMessage httpResponseMessage = client.Send(requestMessage);
+
+        //string result = httpResponseMessage.Content.ReadAsStringAsync().Result;
+        //Console.WriteLine(result);
+
+        CommonSDK.AI.ChatClient.IChatClient client = new CommonSDK.AI.ChatClient.OllamaChatClient("http://localhost:8000", "llama3.2");
+
+        client.ChatAsync("为什么人需要氧气？");
+
         Console.ReadKey();
     }
 }

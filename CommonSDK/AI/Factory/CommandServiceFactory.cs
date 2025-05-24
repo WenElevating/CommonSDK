@@ -9,7 +9,7 @@ using CommonSDK.AI.Ollama;
 
 namespace CommonSDK.AI.Factory
 {
-    public class CommandServiceFactory
+    internal class CommandServiceFactory
     {
         public static ICommandService Create(AIPlatform platform)
         {

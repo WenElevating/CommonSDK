@@ -12,4 +12,8 @@
     <ProjectReference Include="..\CommonSDK\CommonSDK.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Interface\" />
+  </ItemGroup>
+
 </Project>

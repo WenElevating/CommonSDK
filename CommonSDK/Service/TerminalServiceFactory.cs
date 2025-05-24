@@ -8,7 +8,7 @@ using CommonSDK.Util;
 
 namespace CommonSDK.Service
 {
-    public class TerminalServiceFactory
+    internal class TerminalServiceFactory
     {
         public static ITerminalService Create()
         {

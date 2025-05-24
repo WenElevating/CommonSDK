@@ -8,7 +8,7 @@ using CommonSDK.AI.Interface;
 
 namespace CommonSDK.AI.Ollama
 {
-    public class OllamaCommandService : ICommandService
+    internal class OllamaCommandService : ICommandService
     {
         public string GetRunModelCommand(string executeablePath, string modelId)
         {

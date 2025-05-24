@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,9 +9,8 @@ using CommonSDK.Util;
 
 namespace CommonSDK.Service
 {
-    public class WindowsTerminalService : ITerminalService
+    internal class WindowsTerminalService : ITerminalService
     {
-        private readonly Process _cureentProcess;
 
         public WindowsTerminalService()
         {
@@ -18,15 +18,6 @@ namespace CommonSDK.Service
             {
                 throw new PlatformNotSupportedException("The service only support windows platform!");
             }
-
-            _cureentProcess = new();
-            _cureentProcess.StartInfo.FileName = "cmd.exe";
-            _cureentProcess.StartInfo.UseShellExecute = false;    //是否使用操作系统shell启动
-            _cureentProcess.StartInfo.RedirectStandardInput = true;//接受来自调用程序的输入信息
-            _cureentProcess.StartInfo.RedirectStandardOutput = true;//由调用程序获取输出信息
-            _cureentProcess.StartInfo.RedirectStandardError = true;//重定向标准错误输出
-            _cureentProcess.StartInfo.CreateNoWindow = true;//不显示程序窗口
-            _cureentProcess.Start();//启动程序
         }
 
         public async Task<bool> ExecuteCommandAsync(string command)
@@ -36,7 +27,43 @@ namespace CommonSDK.Service
 
             try
             {
-                await _cureentProcess.StandardInput.WriteAsync(command);
+                using Process p = new();
+                
+                // 设置要启动的应用程序
+                p.StartInfo.FileName = "cmd.exe";
+                
+                // 是否使用操作系统shell启动
+                p.StartInfo.UseShellExecute = false;
+                
+                // 接受来自调用程序的输入信息
+                p.StartInfo.RedirectStandardInput = true;
+                
+                // 输出信息
+                p.StartInfo.RedirectStandardOutput = true;
+                
+                // 输出错误
+                p.StartInfo.RedirectStandardError = true;
+                
+                // 不显示程序窗口
+                p.StartInfo.CreateNoWindow = true;
+
+                // 启动程序
+                p.Start();
+
+                // 向cmd窗口发送输入信息
+                p.StandardInput.WriteLine(command);
+
+                // 自动推送
+                p.StandardInput.AutoFlush = true;
+
+                //获取输出信息
+                //string strOuput = await p.StandardOutput.ReadToEndAsync();
+                
+                //等待程序执行完退出进程
+                //p.WaitForExit();
+                
+                //Debug.WriteLine(strOuput);
+                
                 return true;
             }
             catch (Exception ex)
