@@ -10,6 +10,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using CommonSDK.AI.ChatClient;
 using CommonSDK.AI.Ollama;
+using ICSharpCode.AvalonEdit;
 
 namespace CommonSDK.Application
 {
@@ -50,7 +51,8 @@ namespace CommonSDK.Application
                 {
                     if (item.Code == ChatResultCode.Success)
                     {
-                        ChatTextBlock.Text += item.Data.Message.Content;
+                        textEditor.Text += item.Data.Message.Content;
+                        //ChatTextBlock.Text += item.Data.Message.Content;
                     }
                 }
             });

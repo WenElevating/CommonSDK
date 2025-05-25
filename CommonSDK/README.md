@@ -23,7 +23,7 @@
 
 2. The event bus provides a communication method between modules, offering the BaseEventSource<T> class and the EventBusService class. The BaseEventSource<T> class defines the basic operations of the event source, including methods for registering, unregistering, and triggering events. The EventBusService class implements the BaseEventSource<T> interface and provides the specific interaction logic with the event bus.
 
-3. Has stopped using Microsoft.Extensions.AI and Microsoft.Extensions.AI.Ollama, now rewrite the logical interface request, to provide the reference Ollama API documentation. Only ChatAsync calls are currently supported, and implementation of streams is in progress. ollama chat API interface, providing large model question-answering capabilities. It takes a long time to request the interface without streaming, and the average time is 20 ~ 30ms
+3. Has stopped using Microsoft.Extensions.AI and Microsoft.Extensions.AI.Ollama, now rewrite the logical interface request, to provide the reference Ollama API documentation. ChatStreamAsync、ChatAsync calls are currently supported, and implementation of streams is in progress. ollama chat API interface, providing large model question-answering capabilities. It takes a long time to request the interface without streaming, and the average time is 20 ~ 30ms
 
 4. It is now possible to request a question and answer as an OllamaService or OllamaChatClient, and OllamaService supports running the model through code
 
@@ -88,4 +88,5 @@
 }
 ```
 ##### Provide a running screenshot:
-![Run Sample](https://private-user-images.githubusercontent.com/76479407/443107707-eb099a24-e941-40e8-8512-1eaac24fdd81.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDgxMDMxMDQsIm5iZiI6MTc0ODEwMjgwNCwicGF0aCI6Ii83NjQ3OTQwNy80NDMxMDc3MDctZWIwOTlhMjQtZTk0MS00MGU4LTg1MTItMWVhYWMyNGZkZDgxLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTA1MjQlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwNTI0VDE2MDY0NFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTJmYmQyZTQxM2ZhZmQ2MzczNmQ0YmVjMjA2YzEyZWFhNjEyNjQ2MGMyZDZiMzM3MGUwOGZlN2FiZGJkYjcxNWYmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.KevAPQLoAJ8ACqlxa4dfcs_ukzz-rl_0Do5UX3phaLo)  
+![Run TextBlock Sample](https://github.com/WenElevating/ImageBed/blob/main/AI/sample.png)  
+![Run Markdown Sample](https://github.com/WenElevating/ImageBed/blob/main/AI/sample-markdown-editor.png)

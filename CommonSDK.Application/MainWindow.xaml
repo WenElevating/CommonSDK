@@ -11,5 +11,12 @@
     mc:Ignorable="d">
     <Grid>
         <TextBlock x:Name="ChatTextBlock" TextWrapping="WrapWithOverflow" />
+        <avalonEdit:TextEditor
+            xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
+            Name="textEditor"
+            FontFamily="Consolas"
+            FontSize="10pt"
+            SyntaxHighlighting="C#"
+            WordWrap="True" />
     </Grid>
 </Window>

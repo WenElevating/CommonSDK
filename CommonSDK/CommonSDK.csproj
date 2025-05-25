@@ -8,7 +8,7 @@
         <Title>CommonSDK</Title>
         <Description>It is used to provide a unified event manager to solve the communication challenges between modules</Description>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-		<Version>1.0.5</Version>
+		<Version>1.0.6</Version>
     </PropertyGroup>
 
     <ItemGroup>
