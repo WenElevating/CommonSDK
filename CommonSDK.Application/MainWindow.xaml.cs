@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using CommonSDK.AI.ChatClient;
 using CommonSDK.AI.Ollama;
 
 namespace CommonSDK.Application
@@ -30,17 +31,29 @@ namespace CommonSDK.Application
         {
             System.Windows.Application.Current.Dispatcher.InvokeAsync(async () =>
             {
-                await service.RunAsync();
+                // use on service
+                //await service.RunAsync();
 
-                //await service.ChatStreamAsync("Recommend a few must-read books for programmers.", (text) =>
+                //AI.ChatClient.ChatResponse response = await service.ChatAsync("Recommend a few must-read books for programmers.");
+
+                //ChatTextBlock.Text += response.Data.Message.Content;
+
+                //await service.ChatStreamAsync("Recommend a few must-read books for programmers.", (message) =>
                 //{
-                //    ChatTextBlock.Text += text;
+                //    ChatTextBlock.Text += message;
                 //});
 
-                AI.ChatClient.ChatResponse response = await service.ChatAsync("Recommend a few must-read books for programmers.");
-                ChatTextBlock.Text += response.Data.Message.Content;
+                // use on client
+                IChatClient client = new OllamaChatClient("http://localhost:8000", "llama3.2");
+                CancellationTokenSource tokenSource = new();
+                await foreach (var item in client.ChatStreamAsync("Recommend a few must-read books for programmers.", tokenSource.Token))
+                {
+                    if (item.Code == ChatResultCode.Success)
+                    {
+                        ChatTextBlock.Text += item.Data.Message.Content;
+                    }
+                }
             });
-            
         }
 
         private async void MainWindow_Closed(object? sender, EventArgs e)

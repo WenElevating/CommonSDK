@@ -79,12 +79,11 @@ public class OllamaService : IChatService<ChatResponse>
         ArgumentNullException.ThrowIfNullOrEmpty(message);
         ArgumentNullException.ThrowIfNullOrWhiteSpace(message);
 
-        //await foreach (var update in client.GetStreamingResponseAsync(message))
-        //{
-        //    streamCallback?.Invoke(update.Text);
-        //    Console.Write(update);
-        //}
-        //Console.WriteLine();
+        CancellationTokenSource tokenSource = new();
+        await foreach (var item in client.ChatStreamAsync(message, tokenSource.Token))
+        {
+            streamCallback?.Invoke(item.Data.Message.Content);
+        }
     }
 
     public async ValueTask DisposeAsync()

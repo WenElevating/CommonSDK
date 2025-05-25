@@ -1,5 +1,4 @@
 ﻿using CommonSDK.AI.Ollama;
-using Microsoft.Extensions.AI;
 
 namespace CommonSDK.UnitTests;
 
@@ -13,7 +12,7 @@ public class OllamaUnitTest
     [SetUp]
     public void Setup()
     {
-        service = new OllamaService("http://192.168.4.94:8000", "llama3.2");
+        // service = new OllamaService("http://192.168.4.94:8000", "llama3.2");
     }
 
     [Test]

@@ -68,14 +68,57 @@ namespace CommonSDK.AI.ChatClient
 
     public struct ChatResponse
     {
+        [JsonIgnore]
+        public string Id { get; set; }
+
         [JsonProperty("data")]
         public InternalChatResponse Data { get; set; }
 
         [JsonProperty("code")]
         public ChatResultCode Code { get; set; }
     }
+
     public interface IChatClient
     {
+        /// <summary>
+        /// chat API interface, providing large model question-answering capabilities.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
         public Task<ChatResponse> ChatAsync(string message);
+
+        /// <summary>
+        /// chat API interface, providing large model question-answering capabilities with cancellation support.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public Task<ChatResponse> ChatAsync(string message, CancellationToken token);
+
+        /// <summary>
+        /// Stream chat API interface, providing large model question-answering capabilities with real-time message streaming.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="onReceivedMessage"></param>
+        /// <returns></returns>
+        public Task<ChatResponse> ChatStreamAsync(string message, Action<string> onReceivedMessage);
+
+        /// <summary>
+        /// Stream chat API interface, providing large model question-answering capabilities with real-time message streaming and cancellation support.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="onReceivedMessage"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public Task<ChatResponse> ChatStreamAsync(string message, Action<string> onReceivedMessage, CancellationToken token = default);
+
+        /// <summary>
+        /// Stream chat API interface, providing large model question-answering capabilities with real-time message streaming without callback.It base on yield.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public IAsyncEnumerable<ChatResponse> ChatStreamAsync(string message, CancellationToken token = default);
+
     }
 }

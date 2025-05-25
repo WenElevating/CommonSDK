@@ -50,10 +50,34 @@ namespace CommonSDK.Http
         public Task<HttpResponseMessage> PostJsonAsync(ReqeustContextWithHeader context);
 
         /// <summary>
+        /// Post request by context
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public Task<HttpResponseMessage> PostJsonAsync(ReqeustContextWithHeader context, CancellationToken token);
+
+        /// <summary>
+        /// Post request by context, and return NDJson response
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public Task<HttpResponseMessage> PostNDJsonAsync(ReqeustContextWithHeader context, CancellationToken token);
+
+        /// <summary>
         /// Post request by context, and return stream
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
         public Task<Stream> PostStreamAsync(ReqeustContextWithHeader context);
+
+        /// <summary>
+        /// Post request by context, and return stream with cancellation token
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public Task<Stream> PostStreamAsync(ReqeustContextWithHeader context, CancellationToken token);
+
     }
 }

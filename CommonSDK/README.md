@@ -10,6 +10,9 @@
 	- Ollama
 		- OllamaService
         - OllamaCommandService
+    - ChatClient
+        - IChatClient
+        - OllamaChatClient
   - EventBus
 	- Interface
 	- Model
@@ -20,11 +23,13 @@
 
 2. The event bus provides a communication method between modules, offering the BaseEventSource<T> class and the EventBusService class. The BaseEventSource<T> class defines the basic operations of the event source, including methods for registering, unregistering, and triggering events. The EventBusService class implements the BaseEventSource<T> interface and provides the specific interaction logic with the event bus.
 
-3. Microsoft.Extensions.AI and Microsoft.Extensions.AI.Ollama isn't use, I have now rewritten the request logic to refer to the API documentation provided by Ollama. Currently only ChatAsync calls are supported, and the Stream implementation is under way. ollama chat API interface, providing large model question-answering capabilities. This interface is time-consuming, with an average time of 20 to 30ms
+3. Has stopped using Microsoft.Extensions.AI and Microsoft.Extensions.AI.Ollama, now rewrite the logical interface request, to provide the reference Ollama API documentation. Only ChatAsync calls are currently supported, and implementation of streams is in progress. ollama chat API interface, providing large model question-answering capabilities. It takes a long time to request the interface without streaming, and the average time is 20 ~ 30ms
 
-4. The remaining modules are still under development, please do not use.
+4. It is now possible to request a question and answer as an OllamaService or OllamaChatClient, and OllamaService supports running the model through code
 
-5. Only the call to load a local JSON configuration file is supported now. Here is an example:
+5. The full source code for this project is available at https://github.com/WenElevating/CommonSDK
+
+6. Support to load a local JSON configuration file is supported now. Here is an example:
 ```json
 {
     "ModelId": "llama3.2",
@@ -33,9 +38,9 @@
 }
 ```
 
-#### The following is an example of usage: (based on the WPF framework)
+#### The following is an example usage of the ollama service: (based on the WPF framework)
 ``` c#
-    public partial class MainWindow : Window
+        public partial class MainWindow : Window
     {
         private readonly OllamaService service = new("D:\\RiderProject\\CommonSDK\\CommonSDK.Application\\OllamaConfiguration.json");
 
@@ -50,17 +55,29 @@
         {
             System.Windows.Application.Current.Dispatcher.InvokeAsync(async () =>
             {
-                await service.RunAsync();
+                // use on service
+                //await service.RunAsync();
 
-                //await service.ChatStreamAsync("Recommend a few must-read books for programmers.", (text) =>
+                //AI.ChatClient.ChatResponse response = await service.ChatAsync("Recommend a few must-read books for programmers.");
+
+                //ChatTextBlock.Text += response.Data.Message.Content;
+
+                //await service.ChatStreamAsync("Recommend a few must-read books for programmers.", (message) =>
                 //{
-                //    ChatTextBlock.Text += text;
+                //    ChatTextBlock.Text += message;
                 //});
 
-                AI.ChatClient.ChatResponse response = await service.ChatAsync("Recommend a few must-read books for programmers.");
-                ChatTextBlock.Text += response.Data.Message.Content;
+                // use on client
+                IChatClient client = new OllamaChatClient("http://localhost:8000", "llama3.2");
+                CancellationTokenSource tokenSource = new();
+                await foreach (var item in client.ChatStreamAsync("Recommend a few must-read books for programmers.", tokenSource.Token))
+                {
+                    if (item.Code == ChatResultCode.Success)
+                    {
+                        ChatTextBlock.Text += item.Data.Message.Content;
+                    }
+                }
             });
-            
         }
 
         private async void MainWindow_Closed(object? sender, EventArgs e)
@@ -68,6 +85,7 @@
             await service.DisposeAsync();
         }
     }
+}
 ```
 ##### Provide a running screenshot:
-![Run Sample](.\sample.png)  
+![Run Sample](https://private-user-images.githubusercontent.com/76479407/443107707-eb099a24-e941-40e8-8512-1eaac24fdd81.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDgxMDMxMDQsIm5iZiI6MTc0ODEwMjgwNCwicGF0aCI6Ii83NjQ3OTQwNy80NDMxMDc3MDctZWIwOTlhMjQtZTk0MS00MGU4LTg1MTItMWVhYWMyNGZkZDgxLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTA1MjQlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwNTI0VDE2MDY0NFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTJmYmQyZTQxM2ZhZmQ2MzczNmQ0YmVjMjA2YzEyZWFhNjEyNjQ2MGMyZDZiMzM3MGUwOGZlN2FiZGJkYjcxNWYmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.KevAPQLoAJ8ACqlxa4dfcs_ukzz-rl_0Do5UX3phaLo)  

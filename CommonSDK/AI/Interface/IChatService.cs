@@ -1,4 +1,6 @@
-﻿namespace CommonSDK.AI.Interface;
+﻿using CommonSDK.AI.ChatClient;
+
+namespace CommonSDK.AI.Interface;
 
 public interface IChatService<T> : IAsyncDisposable
 {

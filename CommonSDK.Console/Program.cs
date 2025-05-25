@@ -6,8 +6,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using CommonSDK.AI.ChatClient;
 using CommonSDK.AI.Ollama;
+using CommonSDK.Console.Test;
 using CommonSDK.Util;
-using Microsoft.Extensions.AI;
 using Microsoft.Win32;
 using TestSDK.Test;
 
@@ -144,9 +144,25 @@ class Program
         //string result = httpResponseMessage.Content.ReadAsStringAsync().Result;
         //Console.WriteLine(result);
 
-        CommonSDK.AI.ChatClient.IChatClient client = new CommonSDK.AI.ChatClient.OllamaChatClient("http://localhost:8000", "llama3.2");
+        //IChatClient client = new OllamaChatClient("http://localhost:8000", "llama3.2");
 
-        client.ChatAsync("为什么人需要氧气？");
+        //CancellationTokenSource tokenSource = new();
+
+        //Task<ChatResponse> response = client.ChatAsync("为什么人需要氧气？", tokenSource.Token);
+
+        //Task.Run(() =>
+        //{
+        //    Thread.Sleep(3000);
+        //    tokenSource.Cancel();
+        //});
+
+        //response.Wait();
+
+        //Console.WriteLine(response.Result.Data.Message.Content);
+
+        YieldTest test = new YieldTest();
+        test.Run();
+
 
         Console.ReadKey();
     }

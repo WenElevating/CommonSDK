@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using CommonSDK.AI.Builder;
@@ -33,7 +34,7 @@ namespace CommonSDK.AI.ChatClient
         }
 
         /// <summary>
-        /// ollama chat API interface, providing large model question-answering capabilities. This interface is time-consuming, with an average time of 20 to 30ms
+        /// ollama chat API interface, providing large model question-answering capabilities.
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
@@ -53,7 +54,7 @@ namespace CommonSDK.AI.ChatClient
                 string chatUrl = url + OllamaApiString.ChatApi;
 
                 // 转为Json
-                string jsonRequest = OllamaChatRequestBuilder.BuildSingleMessage(model, message);
+                string jsonRequest = OllamaChatRequestBuilder.BuildNoStreamMessage(model, message);
 
                 // 封装请求上下文
                 ReqeustContextWithHeader data = new(chatUrl, jsonRequest);
@@ -76,10 +77,57 @@ namespace CommonSDK.AI.ChatClient
             return chatResponse;
         }
 
-        private static async Task<ChatResponse> ParseResponseByMessage(HttpResponseMessage response)
+        public async Task<ChatResponse> ChatAsync(string message, CancellationToken token)
+        {
+            Stopwatch dog = new();
+            dog.Start();
+
+            ArgumentNullException.ThrowIfNullOrEmpty(message);
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(message);
+
+            ChatResponse chatResponse;
+
+            try
+            {
+                // 调用http请求接口
+                string chatUrl = url + OllamaApiString.ChatApi;
+
+                // 转为Json
+                string jsonRequest = OllamaChatRequestBuilder.BuildNoStreamMessage(model, message);
+
+                // 封装请求上下文
+                ReqeustContextWithHeader data = new(chatUrl, jsonRequest);
+
+                // 检查token是否被取消
+                token.ThrowIfCancellationRequested();
+
+                // 返回结果
+                HttpResponseMessage response = await client.PostJsonAsync(data, token);
+
+                // 解析得到response
+                chatResponse = await ParseResponseByMessage(response, token);
+            }
+            catch (OperationCanceledException opex)
+            {
+                Debug.WriteLine($"任务已被取消, ex: {opex}", token);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                throw;
+            }
+
+            dog.Stop();
+            Debug.WriteLine($"Total elapsed time: {dog.ElapsedMilliseconds} ms");
+
+            return chatResponse;
+        }
+
+        private static async Task<ChatResponse> ParseResponseByMessage(HttpResponseMessage response, CancellationToken token = default)
         {
             // 获取流数据
-            using Stream stream = await response.Content.ReadAsStreamAsync() ?? throw new InvalidOperationException("Response stream is null.");
+            using Stream stream = await response.Content.ReadAsStreamAsync(token) ?? throw new InvalidOperationException("Response stream is null.");
 
             // 读取流数据
             using StreamReader reader = new(stream, Encoding.UTF8);
@@ -87,6 +135,7 @@ namespace CommonSDK.AI.ChatClient
             // 构建响应
             ChatResponse chatResponse = new()
             {
+                Id = Guid.NewGuid().ToString(),
                 Code = response.StatusCode == System.Net.HttpStatusCode.OK ? ChatResultCode.Success : ChatResultCode.Failed,
                 Data = new InternalChatResponse()
             };
@@ -95,7 +144,7 @@ namespace CommonSDK.AI.ChatClient
 
             StringBuilder builder = new();
             string? currentResult = string.Empty;
-            while ((currentResult = await reader.ReadLineAsync()) != null)
+            while ((currentResult = await reader.ReadLineAsync(token)) != null)
             {
                 internalChatResponse = JsonConvert.DeserializeObject<InternalChatResponse>(currentResult) ?? throw new NotSupportedException("The response data can't support!");
                 builder.Append(internalChatResponse?.Message.Content);
@@ -108,6 +157,145 @@ namespace CommonSDK.AI.ChatClient
             }
 
             return chatResponse;
+        }
+
+        /// <summary>
+        /// ollama chat API interface, providing large model question-answering capabilities with streaming response.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="onReceivedMessage"></param>
+        /// <returns></returns>
+        public async Task<ChatResponse> ChatStreamAsync(string message, Action<string> onReceivedMessage)
+        {
+            Stopwatch dog = new();
+            dog.Start();
+
+            ArgumentNullException.ThrowIfNullOrEmpty(message);
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(message);
+
+            ChatResponse chatResponse;
+
+            try
+            {
+                // 调用http请求接口
+                string chatUrl = url + OllamaApiString.ChatApi;
+
+                // 转为Json
+                string jsonRequest = OllamaChatRequestBuilder.BuildStreamMessage(model, message);
+
+                // 封装请求上下文
+                ReqeustContextWithHeader data = new(chatUrl, jsonRequest);
+
+                // 返回结果
+                HttpResponseMessage response = await client.PostJsonAsync(data);
+
+                // 解析得到response
+                chatResponse = await ParseResponseByMessage(response);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                throw;
+            }
+
+            dog.Stop();
+            Debug.WriteLine($"Total elapsed time: {dog.ElapsedMilliseconds} ms");
+
+            return chatResponse;
+        }
+
+
+
+        public async Task<ChatResponse> ChatStreamAsync(string message, Action<string> onReceivedMessage, CancellationToken token = default)
+        {
+            Stopwatch dog = new();
+            dog.Start();
+
+            ArgumentNullException.ThrowIfNullOrEmpty(message);
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(message);
+
+            ChatResponse chatResponse;
+
+            try
+            {
+                // 调用http请求接口
+                string chatUrl = url + OllamaApiString.ChatApi;
+
+                // 转为Json
+                string jsonRequest = OllamaChatRequestBuilder.BuildStreamMessage(model, message, token);
+
+                // 封装请求上下文
+                ReqeustContextWithHeader data = new(chatUrl, jsonRequest);
+
+                // 返回结果
+                HttpResponseMessage response = await client.PostJsonAsync(data, token);
+
+                // 解析得到response
+                chatResponse = await ParseResponseByMessage(response, token);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                throw;
+            }
+
+            dog.Stop();
+            Debug.WriteLine($"Total elapsed time: {dog.ElapsedMilliseconds} ms");
+
+            return chatResponse;
+        }
+
+        public async IAsyncEnumerable<ChatResponse> ChatStreamAsync(string message, [EnumeratorCancellation] CancellationToken token = default)
+        {
+            Stopwatch dog = new();
+            dog.Start();
+
+            ArgumentNullException.ThrowIfNullOrEmpty(message);
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(message);
+
+            // 调用http请求接口
+            string chatUrl = url + OllamaApiString.ChatApi;
+
+            // 转为Json
+            string jsonRequest = OllamaChatRequestBuilder.BuildStreamMessage(model, message, token);
+
+            // 封装请求上下文
+            ReqeustContextWithHeader data = new(chatUrl, jsonRequest);
+
+            // 返回结果
+            HttpResponseMessage response = await client.PostNDJsonAsync(data, token);
+
+            // 获取流数据
+            using Stream stream = await response.Content.ReadAsStreamAsync(token) ?? throw new InvalidOperationException("Response stream is null.");
+
+            // 读取流数据
+            using StreamReader reader = new(stream, Encoding.UTF8);
+
+            string? currentResult = string.Empty;
+            while ((currentResult = await reader.ReadLineAsync(token)) != null)
+            {
+                InternalChatResponse? internalChatResponse =
+                        JsonConvert.DeserializeObject<InternalChatResponse>(currentResult);
+
+                if (internalChatResponse == null)
+                    throw new NotSupportedException("The response data can't support!");
+
+                yield return new ChatResponse
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Code = ChatResultCode.Success,
+                    Data = new InternalChatResponse
+                    {
+                        Message = new ChatMessage
+                        {
+                            Content = internalChatResponse.Message.Content
+                        }
+                    }
+                };
+            }
+
+            dog.Stop();
+            Debug.WriteLine($"Total elapsed time: {dog.ElapsedMilliseconds} ms");
         }
     }
 }
