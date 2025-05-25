@@ -10,6 +10,9 @@
 	- Ollama
 		- OllamaService
         - OllamaCommandService
+    - ChatClient
+        - IChatClient
+        - OllamaChatClient
   - EventBus
 	- Interface
 	- Model
@@ -20,13 +23,26 @@
 
 2. The event bus provides a communication method between modules, offering the BaseEventSource<T> class and the EventBusService class. The BaseEventSource<T> class defines the basic operations of the event source, including methods for registering, unregistering, and triggering events. The EventBusService class implements the BaseEventSource<T> interface and provides the specific interaction logic with the event bus.
 
-3. The remaining modules are still under development, please do not use.
+3. Has stopped using Microsoft.Extensions.AI and Microsoft.Extensions.AI.Ollama, now rewrite the logical interface request, to provide the reference Ollama API documentation. ChatStreamAsync、ChatAsync calls are currently supported, and implementation of streams is in progress. ollama chat API interface, providing large model question-answering capabilities. It takes a long time to request the interface without streaming, and the average time is 20 ~ 30ms
 
-#### The following is an example of usage: (based on the WPF framework)
+4. It is now possible to request a question and answer as an OllamaService or OllamaChatClient, and OllamaService supports running the model through code
+
+5. The full source code for this project is available at https://github.com/WenElevating/CommonSDK
+
+6. Support to load a local JSON configuration file is supported now. Here is an example:
+```json
+{
+    "ModelId": "llama3.2",
+    "Endpoint": "http://localhost:8000",
+    "ExectuePath":  "D://example"
+}
+```
+
+#### The following is an example usage of the ollama service: (based on the WPF framework)
 ``` c#
-    public partial class MainWindow : Window
+        public partial class MainWindow : Window
     {
-        private readonly OllamaService service = new("http://localhost:8000", "llama3.2");
+        private readonly OllamaService service = new("D:\\RiderProject\\CommonSDK\\CommonSDK.Application\\OllamaConfiguration.json");
 
         public MainWindow()
         {
@@ -39,12 +55,28 @@
         {
             System.Windows.Application.Current.Dispatcher.InvokeAsync(async () =>
             {
-                await service.RunAsync();
+                // use on service
+                //await service.RunAsync();
 
-                await service.ChatStreamAsync("Recommend a few must-read books for programmers.", (text) =>
+                //AI.ChatClient.ChatResponse response = await service.ChatAsync("Recommend a few must-read books for programmers.");
+
+                //ChatTextBlock.Text += response.Data.Message.Content;
+
+                //await service.ChatStreamAsync("Recommend a few must-read books for programmers.", (message) =>
+                //{
+                //    ChatTextBlock.Text += message;
+                //});
+
+                // use on client
+                IChatClient client = new OllamaChatClient("http://localhost:8000", "llama3.2");
+                CancellationTokenSource tokenSource = new();
+                await foreach (var item in client.ChatStreamAsync("Recommend a few must-read books for programmers.", tokenSource.Token))
                 {
-                    ChatTextBlock.Text = (ChatTextBlock.Text += text);
-                });
+                    if (item.Code == ChatResultCode.Success)
+                    {
+                        ChatTextBlock.Text += item.Data.Message.Content;
+                    }
+                }
             });
         }
 
@@ -53,6 +85,8 @@
             await service.DisposeAsync();
         }
     }
+}
 ```
 ##### Provide a running screenshot:
-<img width="591" alt="Run Sample" src="https://github.com/user-attachments/assets/eb099a24-e941-40e8-8512-1eaac24fdd81" />
+![Run TextBlock Sample](https://github.com/WenElevating/ImageBed/blob/main/AI/sample.png)  
+![Run Markdown Sample](https://github.com/WenElevating/ImageBed/blob/main/AI/sample-markdown-editor.png)
