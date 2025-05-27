@@ -22,11 +22,22 @@
 
 3. 已停止使用Microsoft.Extensions.AI和Microsoft.Extensions.AI开发工具包。现在通过Ollama API文档重写接口。目前支持全量和流式回复调用。如果使用全量聊天接口需要很长时间才能回复，平均耗时为20 ~ 30ms。
 
-#### 使用示例如下: (基于WPF框架)
+4. 现在可以通过OllamaService或OllamaChatClient请求聊天，OllamaService支持通过代码启动模型
+
+5. 现在支持加载本地JSON配置文件。请看示例：
+```json
+{
+    "ModelId": "llama3.2",
+    "Endpoint": "http://localhost:8000",
+    "ExectuePath":  "D://example"
+}
+```
+
+#### 下面是Ollama接口的使用示例：（基于WPF框架）
 ``` c#
-    public partial class MainWindow : Window
+        public partial class MainWindow : Window
     {
-        private readonly OllamaService service = new("http://localhost:8000", "llama3.2");
+        private readonly OllamaService service = new("D:\\RiderProject\\CommonSDK\\CommonSDK.Application\\OllamaConfiguration.json");
 
         public MainWindow()
         {
@@ -39,12 +50,28 @@
         {
             System.Windows.Application.Current.Dispatcher.InvokeAsync(async () =>
             {
-                await service.RunAsync();
+                // use on service
+                //await service.RunAsync();
 
-                await service.ChatStreamAsync("Recommend a few must-read books for programmers.", (text) =>
+                //AI.ChatClient.ChatResponse response = await service.ChatAsync("Recommend a few must-read books for programmers.");
+
+                //ChatTextBlock.Text += response.Data.Message.Content;
+
+                //await service.ChatStreamAsync("Recommend a few must-read books for programmers.", (message) =>
+                //{
+                //    ChatTextBlock.Text += message;
+                //});
+
+                // use on client
+                IChatClient client = new OllamaChatClient("http://localhost:8000", "llama3.2");
+                CancellationTokenSource tokenSource = new();
+                await foreach (var item in client.ChatStreamAsync("Recommend a few must-read books for programmers.", tokenSource.Token))
                 {
-                    ChatTextBlock.Text = (ChatTextBlock.Text += text);
-                });
+                    if (item.Code == ChatResultCode.Success)
+                    {
+                        ChatTextBlock.Text += item.Data.Message.Content;
+                    }
+                }
             });
         }
 
@@ -54,5 +81,7 @@
         }
     }
 ```
-##### 提供运行截图:
-<img width="591" alt="Run Sample" src="https://github.com/user-attachments/assets/eb099a24-e941-40e8-8512-1eaac24fdd81" />
+##### Provide a running screenshot:
+![Run TextBlock Sample](https://github.com/WenElevating/ImageBed/blob/main/AI/sample.png)  
+![Run Markdown Sample](https://github.com/WenElevating/ImageBed/blob/main/AI/sample-markdown-editor.png)
+
