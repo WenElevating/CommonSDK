@@ -86,7 +86,6 @@
             await service.DisposeAsync();
         }
     }
-}
 ```
 ##### Provide a running screenshot:
 ![Run TextBlock Sample](https://github.com/WenElevating/ImageBed/blob/main/AI/sample.png)  
