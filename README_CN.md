@@ -81,7 +81,7 @@
         }
     }
 ```
-##### Provide a running screenshot:
+##### 提供运行效果截图:
 ![Run TextBlock Sample](https://github.com/WenElevating/ImageBed/blob/main/AI/sample.png)  
 ![Run Markdown Sample](https://github.com/WenElevating/ImageBed/blob/main/AI/sample-markdown-editor.png)
 
