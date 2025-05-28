@@ -23,7 +23,7 @@
 
 2. The event bus provides a communication method between modules, offering the BaseEventSource<T> class and the EventBusService class. The BaseEventSource<T> class defines the basic operations of the event source, including methods for registering, unregistering, and triggering events. The EventBusService class implements the BaseEventSource<T> interface and provides the specific interaction logic with the event bus.
 
-3. Has stopped using Microsoft.Extensions.AI and Microsoft.Extensions.AI.Ollama, now rewrite the logical interface request, to provide the reference Ollama API documentation. ChatStreamAsync、ChatAsync calls are currently supported, and implementation of streams is in progress. ollama chat API interface, providing large model question-answering capabilities. It takes a long time to request the interface without streaming, and the average time is 20 ~ 30ms
+3. Has stopped using Microsoft.Extensions.AI and Microsoft.Extensions.AI.Ollama, now rewrite the logical interface request, to provide the reference Ollama API documentation. ChatStreamAsync、ChatAsync、GetLocalModelsAsync、GetModelInfoAsync calls are currently supported, and implementation of streams is in progress. ollama chat API interface, providing large model question-answering capabilities. It takes a long time to request the interface without streaming, and the average time is 20 ~ 30ms
 
 4. It is now possible to request a question and answer as an OllamaService or OllamaChatClient, and OllamaService supports running the model through code
 
@@ -85,7 +85,6 @@
             await service.DisposeAsync();
         }
     }
-}
 ```
 ##### Provide a running screenshot:
 ![Run TextBlock Sample](https://github.com/WenElevating/ImageBed/blob/main/AI/sample.png)  

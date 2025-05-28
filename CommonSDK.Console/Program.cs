@@ -9,7 +9,9 @@ using CommonSDK.AI.Ollama;
 using CommonSDK.Console.Test;
 using CommonSDK.Util;
 using Microsoft.Win32;
+using Newtonsoft.Json;
 using TestSDK.Test;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TestSDK;
 
@@ -144,17 +146,13 @@ class Program
         //string result = httpResponseMessage.Content.ReadAsStringAsync().Result;
         //Console.WriteLine(result);
 
-        //IChatClient client = new OllamaChatClient("http://localhost:8000", "llama3.2");
+        IChatClient client = new OllamaChatClient("http://localhost:8000", "llama3.2");
 
-        //CancellationTokenSource tokenSource = new();
+        CancellationTokenSource tokenSource = new();
 
-        //Task<ChatResponse> response = client.ChatAsync("为什么人需要氧气？", tokenSource.Token);
-
-        //Task.Run(() =>
-        //{
-        //    Thread.Sleep(3000);
-        //    tokenSource.Cancel();
-        //});
+        //Task<LocalModelData> task = client.GetLocalModels(tokenSource.Token);
+        Task<ModelInfoResponse> task = client.GetModelInfoAsync("llama3.2", tokenSource.Token);
+        task.Wait();
 
         //response.Wait();
 

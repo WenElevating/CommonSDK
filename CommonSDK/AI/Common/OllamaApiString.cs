@@ -10,5 +10,9 @@ namespace CommonSDK.AI.Common
     {
         public static readonly string ChatApi = "/api/chat";
 
+        public static readonly string LocalModelsApi = "/api/tags";
+
+        public static readonly string GetModeInfoApi = "/api/show";
+
     }
 }

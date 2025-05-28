@@ -55,6 +55,17 @@ namespace CommonSDK.AI.Model
                 KeepAlive = keepAlive
             };
         }
+
+        public static OllamaChatRequest Create(string model, List<OllamaChatRequestMessage> messages, bool stream = false, int keepAlive = 5)
+        {
+            return new OllamaChatRequest
+            {
+                Model = model,
+                Messages = messages,
+                Stream = stream,
+                KeepAlive = keepAlive
+            };
+        }
     }
 
     internal struct OllamaChatRequestMessage
