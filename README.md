@@ -1,3 +1,4 @@
+### [简体中文](https://github.com/WenElevating/CommonSDK/blob/master/README_CN.md)
 ## Goal: Write a universal development toolkit
 #### Includes the following directory:
 - CommonSDK
@@ -85,7 +86,6 @@
             await service.DisposeAsync();
         }
     }
-}
 ```
 ##### Provide a running screenshot:
 ![Run TextBlock Sample](https://github.com/WenElevating/ImageBed/blob/main/AI/sample.png)  
